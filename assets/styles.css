@@ -1,0 +1,536 @@
+/* ============================================================
+   Калькулятор печати на шарах — стили (БЭМ).
+   Блоки: page, calc, balloon, swatch, order-form.
+   Data-driven значения (цвет шара, цвет свотча, узелок)
+   передаются из script.js через CSS-переменные / background.
+   ============================================================ */
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #eef0f4;
+}
+a {
+  color: #2b2b63;
+  text-decoration: none;
+}
+a:hover {
+  color: #e8720f;
+}
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+}
+[hidden] {
+  display: none !important;
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-0.6deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(0.6deg);
+  }
+}
+
+/* ==================== page ==================== */
+.page {
+  font-family: "Golos Text", sans-serif;
+  color: #1e1e2a;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 40px 28px 64px;
+}
+.page__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+/* Заголовки — типографика zatey.ru (Roboto) */
+.page__title {
+  font-family: "Roboto", Verdana, sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: normal;
+  margin: 0;
+  color: #3e6edc;
+}
+.page__subtitle {
+  font-size: 15px;
+  color: #6b6b78;
+  font-weight: 500;
+}
+
+/* ==================== calc ==================== */
+.calc__grid {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 36px;
+  align-items: start;
+}
+@media (max-width: 820px) {
+  .calc__grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .calc__preview {
+    position: static;
+  }
+}
+
+.calc__preview {
+  position: sticky;
+  top: 24px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px 24px;
+  box-shadow: 0 10px 40px -18px rgba(30, 30, 60, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.calc__caption {
+  margin-top: 26px;
+  text-align: center;
+}
+.calc__caption-label {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9a9aa8;
+  font-weight: 600;
+}
+.calc__caption-name {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 2px;
+  color: #2b2b63;
+}
+
+.calc__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+/* Секционный заголовок — серая плашка как .title_h2 на zatey.ru */
+.calc__section-title {
+  font-family: "Roboto", Verdana, sans-serif;
+  font-size: 20px;
+  line-height: 22px;
+  font-weight: 400;
+  color: #111;
+  background: #eae9e9;
+  border-radius: 4px;
+  padding: 8px 10px 9px;
+  margin-bottom: 12px;
+}
+.calc__swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.calc__color-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.calc__color-row-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #54545f;
+  margin-bottom: 8px;
+}
+.calc__color-row-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.calc__side-b {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px dashed #d9d9e3;
+}
+
+.calc__select {
+  width: 100%;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e1e2a;
+  background-color: #fff;
+  border: 1.5px solid #d9d9e3;
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 15px 44px 15px 16px;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%232b2b63' stroke-width='2.5'><path d='M6 9l6 6 6-6'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+}
+.calc__select:focus {
+  outline: none;
+  border-color: #2b2b63;
+  box-shadow: 0 0 0 3px rgba(43, 43, 99, 0.12);
+}
+.calc__select--qty {
+  font-weight: 700;
+  padding-right: 40px;
+}
+
+.calc__toggle {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.calc__toggle-btn {
+  flex: 1;
+  padding: 11px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 10px;
+  border: 1.5px solid #d9d9e3;
+  background: #fff;
+  color: #54545f;
+}
+.calc__toggle-btn--active {
+  border-color: #2b2b63;
+  background: #2b2b63;
+  color: #fff;
+}
+
+.calc__qty-row {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 20px;
+  align-items: end;
+}
+@media (max-width: 520px) {
+  .calc__qty-row {
+    grid-template-columns: 1fr;
+  }
+}
+.calc__total {
+  background: #2b2b63;
+  border-radius: 14px;
+  padding: 16px 20px;
+  color: #fff;
+}
+.calc__total-label {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #b9b9dd;
+  font-weight: 600;
+}
+.calc__total-main {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.calc__total-value {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffb877;
+}
+.calc__total-cur {
+  font-size: 16px;
+  font-weight: 600;
+}
+.calc__total-per {
+  font-size: 13px;
+  color: #b9b9dd;
+  margin-top: 2px;
+}
+
+.calc__order-btn {
+  align-self: flex-start;
+  padding: 15px 40px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: #e8720f;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 8px 22px -8px rgba(232, 114, 15, 0.7);
+}
+.calc__order-btn:hover {
+  background: #d1640a;
+}
+
+/* ==================== balloon ==================== */
+/* Data-driven переменные (задаёт script.js):
+   --balloon-bg     — фон шара (градиент блика + цвет)
+   --balloon-shadow — filter с тенями                  */
+.balloon {
+  position: relative;
+  width: 270px;
+  height: 330px;
+  animation: floaty 6s ease-in-out infinite;
+}
+.balloon__shadow {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: var(--balloon-shadow);
+}
+.balloon__body {
+  position: relative;
+  width: 230px;
+  height: 300px;
+  background: var(--balloon-bg);
+  /* Единый силуэт: контур шара + треугольник узелка вторым подконтуром —
+     фон и тень непрерывны, узелок не перекрашивается отдельно */
+  clip-path: path(
+    "M115 4 C55 4 16 55 16 120 C16 190 60 250 95 276 C102 281 128 281 135 276 C170 250 214 190 214 120 C214 55 175 4 115 4 Z M94 272 L115 296 L136 272 Z"
+  );
+}
+.balloon__highlight {
+  position: absolute;
+  top: 11%;
+  left: 15%;
+  width: 32%;
+  height: 40%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 30%,
+    rgba(255, 255, 255, 0.82),
+    rgba(255, 255, 255, 0)
+  );
+  filter: blur(4px);
+  pointer-events: none;
+}
+.balloon__print {
+  position: absolute;
+  inset: 0;
+}
+.balloon__logo {
+  position: absolute;
+}
+/* Инлайн-defs с symbol-ами логотипов: вне потока, невидим */
+.logo-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+/* Части логотипа перекрашиваются CSS-переменными
+   (--logo-c0/1/2 задаёт script.js на каждом svg) */
+.logo-part {
+  fill-rule: evenodd;
+}
+.logo-part--0 { fill: var(--logo-c0, #20201f); }
+.logo-part--1 { fill: var(--logo-c1, #20201f); }
+.logo-part--2 { fill: var(--logo-c2, #20201f); }
+.balloon__logo--front {
+  left: 50%;
+  top: 48%;
+  transform: translate(-50%, -50%);
+  width: 64%;
+  height: auto;
+}
+.balloon__logo--left {
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 46%;
+  width: auto;
+}
+.balloon__logo--right {
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 46%;
+  width: auto;
+}
+
+/* ==================== swatch ==================== */
+/* background задаёт script.js инлайн (цвет — данные) */
+.swatch {
+  cursor: pointer;
+  padding: 0;
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
+  transition:
+    box-shadow 0.12s,
+    transform 0.12s;
+}
+.swatch--light {
+  border-color: #d3d3dd;
+}
+.swatch--round {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+}
+.swatch--sq {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+}
+.swatch--selected {
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px #2b2b63;
+  transform: scale(1.06);
+}
+
+/* ==================== order-form ==================== */
+.order-form {
+  margin-top: 40px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 36px;
+  box-shadow: 0 10px 40px -18px rgba(30, 30, 60, 0.35);
+}
+.order-form__title {
+  font-family: "Roboto", Verdana, sans-serif;
+  font-size: 20px;
+  line-height: 22px;
+  font-weight: 500;
+  color: #464646;
+  margin: 0 0 24px;
+  text-align: center;
+}
+.order-form__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px 28px;
+}
+@media (max-width: 560px) {
+  .order-form__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.order-form__summary {
+  grid-column: 1/-1;
+  background: #f6f6fa;
+  border-radius: 14px;
+  padding: 20px 22px;
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 8px 28px;
+  align-items: center;
+}
+.order-form__summary-head {
+  font-size: 13px;
+  color: #9a9aa8;
+  font-weight: 600;
+}
+.order-form__summary-cell {
+  font-size: 15px;
+  font-weight: 700;
+}
+.order-form__summary-shar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.order-form__summary-name {
+  font-size: 15px;
+}
+.order-form__summary-colors {
+  display: flex;
+  gap: 6px;
+}
+.order-form__summary-total {
+  grid-column: 1/-1;
+  margin-top: 6px;
+  padding-top: 14px;
+  border-top: 1px solid #e3e3ea;
+  font-size: 20px;
+  font-weight: 800;
+  color: #2b2b63;
+}
+.order-form__summary-total b {
+  color: #e8720f;
+}
+
+/* Точки цветов в сводке; background задаёт script.js */
+.order-form__dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: inline-block;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+.order-form__dot--shar {
+  border-radius: 50%;
+  border-color: #d3d3dd;
+}
+
+.order-form__field--full {
+  grid-column: 1/-1;
+}
+.order-form__label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #54545f;
+  margin-bottom: 7px;
+}
+.order-form__input {
+  width: 100%;
+  padding: 13px 15px;
+  font-size: 15px;
+  border: 1.5px solid #d9d9e3;
+  border-radius: 11px;
+}
+.order-form__input:focus {
+  outline: none;
+  border-color: #2b2b63;
+  box-shadow: 0 0 0 3px rgba(43, 43, 99, 0.12);
+}
+textarea.order-form__input {
+  resize: vertical;
+}
+
+.order-form__submit {
+  margin-top: 24px;
+  padding: 15px 44px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: #1f9e3c;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 8px 22px -8px rgba(31, 158, 60, 0.7);
+}
+.order-form__submit:hover {
+  background: #1a8a34;
+}
+.order-form__submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.order-form__thanks {
+  text-align: center;
+  padding: 40px 0;
+}
+.order-form__thanks-title {
+  font-family: "Roboto", Verdana, sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f9e3c;
+  margin-bottom: 8px;
+}
+.order-form__thanks-sub {
+  font-size: 16px;
+  color: #6b6b78;
+}
