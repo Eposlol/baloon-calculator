@@ -1,10 +1,3 @@
-/* ============================================================
-   Калькулятор печати на шарах — vanilla-порт компонента DCLogic.
-   Разметка — в index.html (БЭМ), стили — в styles.css.
-   Здесь только данные, состояние и точечное обновление DOM.
-   Инлайн-стили не используются, кроме data-driven значений:
-   background свотчей/точек и CSS-переменные шара.
-   ============================================================ */
 (function () {
   'use strict';
 
@@ -33,7 +26,7 @@
   var TIERS = [25, 50, 100, 200, 300, 400, 500, 1000, 2000, 3000, 5000, 10000];
 
   var SHARS = [
-    { n: 'Прозрачный', bg: 'linear-gradient(135deg,#fdfdfb,#e9e8df)', light: true },
+    { n: 'Прозрачный', bg: 'linear-gradient(135deg,#fdfdfb,#e9e8df)', light: true, solid: '#d9d8cc' },
     { n: 'Белый', bg: '#ffffff', light: true },
     { n: 'Чёрный', bg: '#20201f' },
     { n: 'Синий', bg: '#1f52c4' },
@@ -47,8 +40,8 @@
     { n: 'Салатовый', bg: '#7ac70c' },
     { n: 'Зелёный', bg: '#1f9e3c' },
     { n: 'Бирюза', bg: '#16b3ad' },
-    { n: 'Золото', bg: 'linear-gradient(135deg,#f6e27a,#c9a227 45%,#9a7b12 70%,#e8cf6b)', metallic: true },
-    { n: 'Серебро', bg: 'linear-gradient(135deg,#f4f5f7,#b8bcc0 45%,#8a8f95 70%,#e6e8ea)', metallic: true },
+    { n: 'Золото', bg: 'linear-gradient(135deg,#f6e27a,#c9a227 45%,#9a7b12 70%,#e8cf6b)', metallic: true, solid: '#c9a227' },
+    { n: 'Серебро', bg: 'linear-gradient(135deg,#f4f5f7,#b8bcc0 45%,#8a8f95 70%,#e6e8ea)', metallic: true, solid: '#a9aeb3' },
   ];
 
   var PAINTS = [
@@ -124,22 +117,19 @@
     summaryTotal: $('summary-total'),
   };
 
-  // ============================================================
-  //  ТОЧКА ДЛЯ БЭКЕНДА — реализуйте отправку заказа здесь.
-  //  Вызывается при отправке формы. orderData содержит выбранную
-  //  конфигурацию и контакты. Верните Promise (async уже подходит).
-  //
-  //  Пример:
-  //    return fetch('/api/order', {
-  //      method: 'POST',
-  //      headers: { 'Content-Type': 'application/json' },
-  //      body: JSON.stringify(orderData),
-  //    });
-  //
-  //  Пока функция пустая — поведение как в оригинале: сразу «Спасибо».
-  // ============================================================
+
   async function submitOrder(orderData) {
-    // ← ваша реализация здесь
+    // todo: реализовать отправку заказа
+    // ============================================================
+
+    //  Пример:
+    //    return fetch('/api/order', {
+    //      method: 'POST',
+    //      headers: { 'Content-Type': 'application/json' },
+    //      body: JSON.stringify(orderData),
+    //    });
+
+    // ============================================================
     console.log('Заказ (демо, без отправки):', orderData);
   }
 
@@ -210,8 +200,10 @@
       ? 'drop-shadow(0 0 1px #c9c9bd) drop-shadow(0 3px 6px rgba(30,30,60,.22)) drop-shadow(0 18px 24px rgba(30,30,60,.28))'
       : 'drop-shadow(0 3px 6px rgba(30,30,60,.18)) drop-shadow(0 18px 24px rgba(30,30,60,.30))';
 
-    el.balloonBody.style.setProperty('--balloon-bg', bg);
+    // на контейнере, а не на теле: --balloon-bg наследуют и тело, и узелок
+    el.balloonShadow.style.setProperty('--balloon-bg', bg);
     el.balloonShadow.style.setProperty('--balloon-shadow', shadow);
+    el.balloonShadow.style.setProperty('--string-color', shar.solid || shar.bg);
     el.sharName.textContent = shar.n;
 
     // логотипы: 1 при односторонней печати, 2 при двухсторонней
@@ -427,7 +419,29 @@
     }
   });
 
+  // ---------- Анимация ниточки ----------
+  // Один GSAP-таймлайн ведёт и полёт шара, и морф ниточки — фазы сцеплены жёстко:
+  // шар поднимается → завиток вытягивается почти в прямую (нить «натянута»),
+  // шар опускается → нить расслабляется обратно в спираль.
+  // Без CDN (нет gsap) остаётся CSS-анимация floaty со статичной ниточкой.
+  function initStringSway() {
+    if (!window.gsap || !window.MorphSVGPlugin) return;
+    gsap.registerPlugin(MorphSVGPlugin);
+
+    // лёгкая остаточная волна вместо идеальной прямой — так натуральнее
+    var STRAIGHT_D = 'M20 0 C18 18 22 30 20 44 C18 58 22 70 20 84 C19 96 21 108 20 122 C20 130 20 140 20 148';
+
+    var balloon = document.querySelector('.balloon');
+    balloon.style.animation = 'none';           // floaty теперь ведёт GSAP
+    gsap.set(balloon, { rotation: -0.6 });      // стартовая поза как в keyframes
+
+    gsap.timeline({ repeat: -1, yoyo: true, defaults: { duration: 3, ease: 'sine.inOut' } })
+      .to(balloon, { y: -10, rotation: 0.6 }, 0)
+      .to('#string-path', { morphSVG: STRAIGHT_D }, 0);
+  }
+
   // ---------- Старт ----------
   initSelects();
   renderAll();
+  initStringSway();
 })();

@@ -277,14 +277,14 @@ button {
 .balloon {
   position: relative;
   width: 270px;
-  height: 330px;
+  height: 465px;
   animation: floaty 6s ease-in-out infinite;
 }
 .balloon__shadow {
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   filter: var(--balloon-shadow);
 }
@@ -293,11 +293,36 @@ button {
   width: 230px;
   height: 300px;
   background: var(--balloon-bg);
-  /* Единый силуэт: контур шара + треугольник узелка вторым подконтуром —
-     фон и тень непрерывны, узелок не перекрашивается отдельно */
+  /* Единый силуэт: низ шара плавно сходится конусом в точку узелка —
+     один контур, без отдельного подконтура и ступеньки */
   clip-path: path(
-    "M115 4 C55 4 16 55 16 120 C16 190 60 250 95 276 C102 281 128 281 135 276 C170 250 214 190 214 120 C214 55 175 4 115 4 Z M94 272 L115 296 L136 272 Z"
+    "M115 4 C55 4 16 55 16 120 C16 190 60 250 95 276 L115 296 L135 276 C170 250 214 190 214 120 C214 55 175 4 115 4 Z"
   );
+}
+/* Узелок: тот же --balloon-bg, что и у тела, + лёгкое затемнение сверху,
+   чтобы читался как отдельный объём. Перекрывает точку схождения тела на 2px —
+   без шва при любом цвете */
+.balloon__knot {
+  position: absolute;
+  left: 50%;
+  top: 294px;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 20px;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.14), rgba(0, 0, 0, 0.26)),
+    var(--balloon-bg);
+  clip-path: path("M11 0 L19 0 L27 13 C27 19 3 19 3 13 Z");
+}
+/* Ниточка-спираль: цвет задаёт script.js через --string-color
+   (solid-цвет шара, т.к. stroke не умеет градиенты из CSS) */
+.balloon__string {
+  position: absolute;
+  left: 50%;
+  top: 312px;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 150px;
 }
 .balloon__highlight {
   position: absolute;
