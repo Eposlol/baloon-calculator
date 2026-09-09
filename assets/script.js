@@ -359,8 +359,19 @@
     };
   }
 
+  // Подписка на change, устойчивая к jQuery-плагинам.
+  // Шаблон Bitrix (Aspro Next) прогоняет по странице ikSelect: он прячет
+  // нативный <select> и на выбор пользователя делает value = ... + $(el).change().
+  // jQuery.trigger не создаёт нативного DOM-события (метода el.change() в DOM нет),
+  // поэтому addEventListener('change') на такой выбор не срабатывает.
+  // Обработчик, повешенный через jQuery, ловит оба случая — и .trigger(), и обычный выбор.
+  function onChange(node, handler) {
+    if (window.jQuery) window.jQuery(node).on('change', handler);
+    else node.addEventListener('change', handler);
+  }
+
   // ---------- События ----------
-  el.optSelect.addEventListener('change', function () {
+  onChange(el.optSelect, function () {
     var o = OPTIONS.find(function (x) { return x.v === el.optSelect.value; });
     state.opt = o.v;
     state.colorsA = resize(state.colorsA, o.a);
@@ -371,7 +382,7 @@
     renderTotal();
   });
 
-  el.qtySelect.addEventListener('change', function () {
+  onChange(el.qtySelect, function () {
     state.qty = +el.qtySelect.value;
     renderTotal();
   });
