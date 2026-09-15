@@ -11,6 +11,8 @@
     href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="./assets/styles.css">
+  <!-- Яндекс SmartCaptcha: виджет рендерим сами в onSmartCaptchaLoad (assets/script.js) -->
+  <script src="https://smartcaptcha.yandexcloud.net/captcha.js?render=onload&onload=onSmartCaptchaLoad" defer></script>
 </head>
 
 <body>
@@ -60,7 +62,7 @@
         <div class="calc__controls">
           <section class="calc__section">
             <div class="calc__section-title">Цвет шара</div>
-            <div class="calc__swatches" id="shar-swatches"></div>
+            <div class="calc__color-row-swatches" id="shar-swatches"></div>
           </section>
 
           <section class="calc__section">
@@ -102,7 +104,7 @@
 
       <!-- ===== Форма заказа ===== -->
       <div class="order-form" id="order-form-card" hidden>
-        <form class="order-form__form" id="order-form">
+        <form class="order-form__form" id="order-form" data-captcha-key="__YANDEX_CLIENT_KEY__" novalidate>
           <h2 class="order-form__title">Ваш заказ</h2>
           <div class="order-form__grid">
             <div class="order-form__summary">
@@ -136,7 +138,12 @@
               <textarea class="order-form__input" id="f-msg" name="msg" rows="3"></textarea>
             </div>
           </div>
+          <!-- Honeypot: скрыт CSS, живой пользователь его не видит и не заполняет -->
+          <input class="order-form__hp" type="text" name="website" id="f-website" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <!-- Контейнер невидимой капчи: визуально пустой, но обязателен для SDK -->
+          <div class="order-form__captcha" id="captcha-container"></div>
           <button type="submit" class="order-form__submit" id="submit-btn">Отправить</button>
+          <div class="order-form__error" id="form-error" role="alert" hidden></div>
         </form>
 
         <div class="order-form__thanks" id="thanks" hidden>

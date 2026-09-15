@@ -109,6 +109,8 @@
     form: $('order-form'),
     thanks: $('thanks'),
     submitBtn: $('submit-btn'),
+    formError: $('form-error'),
+    honeypot: $('f-website'),
     summarySharDot: $('summary-shar-dot'),
     summarySharName: $('summary-shar-name'),
     summaryOpt: $('summary-opt'),
@@ -118,19 +120,112 @@
   };
 
 
+  // ---------- Яндекс SmartCaptcha (невидимая) ----------
+  // Схема: клик «Отправить» → execute() → SDK показывает задание только
+  // подозрительным пользователям → callback(token) → отправка на send.php.
+  // Токен одноразовый и живёт ~5 минут, поэтому после каждой попытки reset().
+  var captcha = { widgetId: null, token: null, ready: false, failed: false };
+
+  window.onSmartCaptchaLoad = function () {
+    var sitekey = el.form.getAttribute('data-captcha-key');
+    if (!window.smartCaptcha || !sitekey || sitekey.indexOf('__') === 0) {
+      captcha.failed = true;
+      console.warn('SmartCaptcha: не указан клиентский ключ (data-captcha-key на форме)');
+      return;
+    }
+    captcha.widgetId = window.smartCaptcha.render('captcha-container', {
+      sitekey: sitekey,
+      invisible: true,
+      hideShield: false,          // по правилам Яндекса уведомление об обработке данных скрывать нельзя
+      shieldPosition: 'bottom-right',
+      callback: function (token) {
+        captcha.token = token;
+        doSubmit();
+      },
+    });
+    // Пользователь закрыл окно с заданием — снимаем состояние «Отправка…»
+    window.smartCaptcha.subscribe(captcha.widgetId, 'challenge-hidden', function () {
+      if (submitting && !captcha.token) setSubmitting(false);
+    });
+    window.smartCaptcha.subscribe(captcha.widgetId, 'network-error', function () {
+      if (submitting && !captcha.token) {
+        showError('Не удалось связаться с сервисом проверки. Попробуйте ещё раз.');
+        setSubmitting(false);
+      }
+    });
+    captcha.ready = true;
+  };
+
+  function resetCaptcha() {
+    captcha.token = null;
+    if (captcha.ready && window.smartCaptcha) window.smartCaptcha.reset(captcha.widgetId);
+  }
+
+  // ---------- Отправка ----------
   async function submitOrder(orderData) {
-    // todo: реализовать отправку заказа
-    // ============================================================
+    var res = await fetch('send.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData),
+    });
+    var json = null;
+    try { json = await res.json(); } catch (e) { /* не-JSON ответ (например, 500 от хостинга) */ }
+    if (!res.ok || !json || json.ok !== true) {
+      throw new Error((json && json.error) || 'Сервер вернул ошибку ' + res.status);
+    }
+    return json;
+  }
 
-    //  Пример:
-    //    return fetch('/api/order', {
-    //      method: 'POST',
-    //      headers: { 'Content-Type': 'application/json' },
-    //      body: JSON.stringify(orderData),
-    //    });
+  function showError(text) {
+    el.formError.textContent = text;
+    el.formError.hidden = false;
+  }
+  function hideError() {
+    el.formError.hidden = true;
+    el.formError.textContent = '';
+  }
 
-    // ============================================================
-    console.log('Заказ (демо, без отправки):', orderData);
+  function setSubmitting(on) {
+    submitting = on;
+    el.submitBtn.disabled = on;
+    el.submitBtn.textContent = on ? 'Отправка…' : 'Отправить';
+  }
+
+  // Клиентская валидация (у формы novalidate — ошибки показываем в своём блоке)
+  function validateForm() {
+    var fields = [$('f-name'), $('f-phone'), $('f-email'), $('f-msg')];
+    fields.forEach(function (f) { f.classList.remove('order-form__input--invalid'); });
+
+    var phone = $('f-phone').value.trim();
+    var email = $('f-email').value.trim();
+    var digits = phone.replace(/\D/g, '');
+    if (digits.length < 6 || digits.length > 15) {
+      $('f-phone').classList.add('order-form__input--invalid');
+      return 'Укажите корректный телефон.';
+    }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      $('f-email').classList.add('order-form__input--invalid');
+      return 'Укажите корректный e-mail или оставьте поле пустым.';
+    }
+    return null;
+  }
+
+
+  async function doSubmit() {
+    try {
+      var data = buildOrderData();
+      data.token = captcha.token;
+      data.website = el.honeypot.value;   // honeypot: у людей пусто
+      await submitOrder(data);
+      el.form.hidden = true;
+      el.thanks.hidden = false;
+    } catch (err) {
+      console.error('Не удалось отправить заказ:', err);
+      showError(err.message || 'Не удалось отправить заявку. Попробуйте ещё раз.');
+    } finally {
+      resetCaptcha();
+      setSubmitting(false);
+    }
   }
 
   // ---------- Утилиты ----------
@@ -175,11 +270,11 @@
   }
 
   // ---------- Построение элементов ----------
-  function buildSwatch(colorObj, selected, round) {
+  function buildSwatch(colorObj, selected) {
     var b = document.createElement('button');
     b.type = 'button';
     b.title = colorObj.n;
-    b.className = 'swatch ' + (round ? 'swatch--round' : 'swatch--sq')
+    b.className = 'swatch ' + 'swatch--sq'
       + (colorObj.light ? ' swatch--light' : '')
       + (selected ? ' swatch--selected' : '');
     b.style.background = colorObj.bg;  // data-driven: цвет из данных
@@ -226,7 +321,7 @@
   function renderSharSwatches() {
     el.sharSwatches.replaceChildren();
     SHARS.forEach(function (c, i) {
-      var b = buildSwatch(c, state.shar === i, true);
+      var b = buildSwatch(c, state.shar === i);
       b.addEventListener('click', function () {
         state.shar = i;
         renderSharSwatches();
@@ -410,24 +505,25 @@
     el.formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
-  el.form.addEventListener('submit', async function (e) {
+  // Первый этап: валидация → запуск невидимой капчи (её callback вызовет doSubmit)
+  el.form.addEventListener('submit', function (e) {
     e.preventDefault();
     if (submitting) return;
-    submitting = true;
-    el.submitBtn.disabled = true;
-    el.submitBtn.textContent = 'Отправка…';
-    try {
-      await submitOrder(buildOrderData());
-      el.form.hidden = true;
-      el.thanks.hidden = false;
-    } catch (err) {
-      console.error('Не удалось отправить заказ:', err);
-      alert('Не удалось отправить заявку. Попробуйте ещё раз.');
-    } finally {
-      submitting = false;
-      el.submitBtn.disabled = false;
-      el.submitBtn.textContent = 'Отправить';
+    hideError();
+
+    var problem = validateForm();
+    if (problem) { showError(problem); return; }
+
+    if (!captcha.ready || !window.smartCaptcha) {
+      showError(captcha.failed
+        ? 'Проверка «я не робот» не настроена. Сообщите администратору сайта.'
+        : 'Проверка «я не робот» ещё загружается. Подождите пару секунд и попробуйте снова.');
+      return;
     }
+
+    setSubmitting(true);
+    captcha.token = null;
+    window.smartCaptcha.execute(captcha.widgetId);
   });
 
   // ---------- Анимация ниточки ----------

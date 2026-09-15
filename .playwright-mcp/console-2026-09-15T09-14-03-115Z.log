@@ -1,0 +1,2 @@
+[     406ms] [WARNING] SmartCaptcha: не указан клиентский ключ (data-captcha-key на форме) @ http://localhost:8765/assets/script.js:132
+[     423ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:8765/favicon.ico:0

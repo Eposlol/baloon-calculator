@@ -32,10 +32,10 @@ button {
 @keyframes floaty {
   0%,
   100% {
-    transform: translateY(0) rotate(-0.6deg);
+    transform: translateY(0) rotate(-0.6deg) !important;
   }
   50% {
-    transform: translateY(-10px) rotate(0.6deg);
+    transform: translateY(-10px) rotate(0.6deg) !important;
   }
 }
 
@@ -306,12 +306,11 @@ button {
   position: absolute;
   left: 50%;
   top: 294px;
-  transform: translateX(-50%);
+  transform: translateX(-50%) !important;
   width: 30px;
   height: 20px;
   background:
-    linear-gradient(rgba(0, 0, 0, 0.14), rgba(0, 0, 0, 0.26)),
-    var(--balloon-bg);
+    linear-gradient(rgba(0, 0, 0, 0.14), rgba(0, 0, 0, 0.26)), var(--balloon-bg);
   clip-path: path("M11 0 L19 0 L27 13 C27 19 3 19 3 13 Z");
 }
 /* Ниточка-спираль: цвет задаёт script.js через --string-color
@@ -320,7 +319,7 @@ button {
   position: absolute;
   left: 50%;
   top: 312px;
-  transform: translateX(-50%);
+  transform: translateX(-50%) !important;
   width: 40px;
   height: 150px;
 }
@@ -358,27 +357,33 @@ button {
 .logo-part {
   fill-rule: evenodd;
 }
-.logo-part--0 { fill: var(--logo-c0, #20201f); }
-.logo-part--1 { fill: var(--logo-c1, #20201f); }
-.logo-part--2 { fill: var(--logo-c2, #20201f); }
+.logo-part--0 {
+  fill: var(--logo-c0, #20201f);
+}
+.logo-part--1 {
+  fill: var(--logo-c1, #20201f);
+}
+.logo-part--2 {
+  fill: var(--logo-c2, #20201f);
+}
 .balloon__logo--front {
   left: 50%;
   top: 48%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) !important;
   width: 64%;
   height: auto;
 }
 .balloon__logo--left {
   left: 0;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-50%) !important;
   height: 46%;
   width: auto;
 }
 .balloon__logo--right {
   right: 0;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-50%) !important;
   height: 46%;
   width: auto;
 }
@@ -558,4 +563,31 @@ textarea.order-form__input {
 .order-form__thanks-sub {
   font-size: 16px;
   color: #6b6b78;
+}
+
+/* ---- Анти-спам и статусы формы ---- */
+.order-form__hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.order-form__captcha {
+  margin-top: 16px;
+}
+.order-form__captcha:empty {
+  display: none;
+}
+.order-form__error {
+  margin-top: 12px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #b3261e;
+  background: #fdecea;
+  border-radius: 10px;
+}
+.order-form__input--invalid {
+  border-color: #b3261e !important;
 }

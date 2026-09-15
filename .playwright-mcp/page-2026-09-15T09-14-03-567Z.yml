@@ -1,0 +1,80 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - heading "Калькулятор печати на шарах" [level=1] [ref=e4]
+    - generic [ref=e5]: Латексные шары 30 см (12″)
+  - generic [ref=e7]:
+    - generic [ref=e18]:
+      - generic [ref=e19]: Цвет шара
+      - generic [ref=e20]: Прозрачный
+    - generic [ref=e21]:
+      - generic [ref=e22]:
+        - generic [ref=e23]: Цвет шара
+        - generic [ref=e24]:
+          - button "Прозрачный" [ref=e25] [cursor=pointer]
+          - button "Белый" [ref=e26] [cursor=pointer]
+          - button "Чёрный" [ref=e27] [cursor=pointer]
+          - button "Синий" [ref=e28] [cursor=pointer]
+          - button "Сиреневый" [ref=e29] [cursor=pointer]
+          - button "Фиолетовый" [ref=e30] [cursor=pointer]
+          - button "Розовый" [ref=e31] [cursor=pointer]
+          - button "Фуксия" [ref=e32] [cursor=pointer]
+          - button "Красный" [ref=e33] [cursor=pointer]
+          - button "Жёлтый" [ref=e34] [cursor=pointer]
+          - button "Оранжевый" [ref=e35] [cursor=pointer]
+          - button "Салатовый" [ref=e36] [cursor=pointer]
+          - button "Зелёный" [ref=e37] [cursor=pointer]
+          - button "Бирюза" [ref=e38] [cursor=pointer]
+          - button "Золото" [ref=e39] [cursor=pointer]
+          - button "Серебро" [ref=e40] [cursor=pointer]
+      - generic [ref=e41]:
+        - generic [ref=e42]: Количество сторон и цветов
+        - combobox [ref=e43] [cursor=pointer]:
+          - option "1+0 — 1 сторона, 1 цвет" [selected]
+          - option "1+1 — 2 стороны, 1 цвет"
+          - option "2+0 — 1 сторона, 2 цвета"
+          - 'option "2+1 — 2 стороны: 2 цвета и 1 цвет"'
+          - option "2+2 — 2 стороны, по 2 цвета"
+      - generic [ref=e44]:
+        - generic [ref=e45]: Цвет логотипа
+        - generic [ref=e47]:
+          - generic [ref=e48]: Цвет 1
+          - generic [ref=e49]:
+            - button "Белый" [ref=e50] [cursor=pointer]
+            - button "Розовый" [ref=e51] [cursor=pointer]
+            - button "Фуксия" [ref=e52] [cursor=pointer]
+            - button "Золото" [ref=e53] [cursor=pointer]
+            - button "Красный" [ref=e54] [cursor=pointer]
+            - button "Коричневый" [ref=e55] [cursor=pointer]
+            - button "Жёлтый" [ref=e56] [cursor=pointer]
+            - button "Оранжевый" [ref=e57] [cursor=pointer]
+            - button "Серебро" [ref=e58] [cursor=pointer]
+            - button "Серый" [ref=e59] [cursor=pointer]
+            - button "Чёрный" [ref=e60] [cursor=pointer]
+            - button "Зелёный" [ref=e61] [cursor=pointer]
+            - button "Голубой" [ref=e62] [cursor=pointer]
+            - button "Сиреневый" [ref=e63] [cursor=pointer]
+            - button "Фиолетовый" [ref=e64] [cursor=pointer]
+            - button "Синий" [ref=e65] [cursor=pointer]
+      - generic [ref=e66]:
+        - generic [ref=e67]:
+          - generic [ref=e68]: Тираж, шт.
+          - combobox [ref=e69] [cursor=pointer]:
+            - option "25"
+            - option "50" [selected]
+            - option "100"
+            - option "200"
+            - option "300"
+            - option "400"
+            - option "500"
+            - option "1 000"
+            - option "2 000"
+            - option "3 000"
+            - option "5 000"
+            - option "10 000"
+        - generic [ref=e70]:
+          - generic [ref=e71]: Итого
+          - generic [ref=e72]:
+            - generic [ref=e73]: 2 500
+            - generic [ref=e74]: руб.
+          - generic [ref=e75]: 50 руб./шт.
+      - button "Заказать" [ref=e76] [cursor=pointer]
